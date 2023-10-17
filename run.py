@@ -10,7 +10,7 @@ from marriage_report_logic import *
 need_debug = True
 
 if __name__ == '__main__':
-    customer_name = 'jackietan'
+    customer_name = 'qianzong'
 
     name, birthday, location, glon_deg, glat_deg, toffset, is_dst, _ = load_customer_info(customer_name=customer_name)
     load_knowledge_file()
