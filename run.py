@@ -13,7 +13,8 @@ if __name__ == '__main__':
     customer_name = 'jackietan'
 
     name, birthday, location, glon_deg, glat_deg, toffset, is_dst, _ = load_customer_info(customer_name=customer_name)
-    load_knowledge_data()
+    load_knowledge_file()
+    load_knowledge_data_old()
     load_jobs_file()
 
     # 从爱星盘字典获取dist
@@ -46,10 +47,14 @@ if __name__ == '__main__':
     get_house_energy()
 
     parse_love()
+    parse_marrage_2()
     parse_marrage()
     parse_wealth()
     parse_health()
     parse_work()
+    parse_asc_star()
+    parse_study()
+    parse_nature()
 
     # -------------------------- Print Trace Log ----------------------
     out_filename = f'./out/{customer_name}_out.txt'
@@ -57,7 +62,7 @@ if __name__ == '__main__':
         f.writelines(f'\n『盘主信息』:\n')
         f.writelines(f'{debug_msg}')
 
-        key_vec = ['恋爱', '婚姻', '财富', '事业', '健康']
+        key_vec = ['个性显现及生活领域上的重点', '恋爱', '婚姻', '财富', '事业', '健康', '学业', '性格分析']
 
         for key in key_vec:
             if key not in all_trace_dict:

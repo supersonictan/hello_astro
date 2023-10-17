@@ -24,6 +24,19 @@ almuten_star_sign_mapping = {
     'X': '中天'
 }
 
+short_mapping = {
+    '太阳': '日',
+    '月亮': '月',
+    '水星': '水',
+    '金星': '金',
+    '木星': '木',
+    '火星': '火',
+    '土星': '土',
+    '天王': '天',
+    '海王': '海',
+    '冥王': '冥'
+}
+
 
 class Recepted:
     def __init__(self, star_a, star_b, action_name, level=''):
@@ -112,11 +125,35 @@ love_trace_dict: Dict[str, List[str]] = {}
 wealth_trace_dict: Dict[str, List[str]] = {}
 health_trace_dict: Dict[str, List[str]] = {}
 work_trace_dict: Dict[str, List[str]] = {}
+asc_trace_dict: Dict[str, List[str]] = {}
+study_trace_dict: Dict[str, List[str]] = {}
+nature_trace_dict: Dict[str, List[str]] = {}
 
-knowledge_dict: Dict[str, str] = {}
+knowledge_dict: Dict[str, Dict[str, str]] = {}
+knowledge_dict_old: Dict[str, str] = {}
 jobs_dict: Dict[str, Tuple[str, str]] = {}
 jobs_star_dict: Dict[str, str] = {}
 # common_trace_vec = []  # for 简单的打印
+
+
+# Load knowledge_web.ini
+def load_knowledge_file():
+    config = configparser.ConfigParser()
+
+    file_name = './knowledge_web.ini'
+    config.read(file_name)
+
+    # 遍历指定section的所有option
+    for section_name in config.sections():
+
+        for option_name in config.options(section_name):
+            value = config.get(section_name, option_name)
+
+            if section_name in knowledge_dict:
+                knowledge_dict[section_name][option_name] = value
+            else:
+                knowledge_dict[section_name] = {option_name: value}
+
 
 def build_almuten_http_data(name, birthinfo, loc, glon_deg, glat_deg, toffset, is_dst):
     data = {}
@@ -317,7 +354,8 @@ def parse_ixingpan_star(soup):
             star_dict[star].constellation = constellation
 
             if house != star_dict[star].house:
-                print(f'{star} {star_dict[star].house} {house}')
+                pass
+                # print(f'{star} {star_dict[star].house} {house}')
         else:
             r = Star(star=star, house=house)
             r.constellation = constellation
@@ -466,13 +504,13 @@ class HSys(Enum):
     Y = 'APC 宮位制'
 
 
-def load_knowledge_data():
+def load_knowledge_data_old():
     with open('./knowledge.csv', 'r') as f:
         for line in f.readlines():
             line = line.strip()
             key = line.split(',')[0]
             val = line.split(',')[1]
-            knowledge_dict[key] = val
+            knowledge_dict_old[key] = val
 
 
 def load_jobs_file():
@@ -625,6 +663,8 @@ def parse_glon_glat(soup):
 
 
 if __name__ == '__main__':
+    load_knowledge_file()
+    print(knowledge_dict.keys())
     load_jobs_file()
     print(jobs_star_dict)
     exit(0)

@@ -240,7 +240,7 @@ def parse_marrage():
     '''
     ruler_7_house = star_dict[ruler_7].house
     search_key = f'7飞{ruler_7_house}'
-    knowledge_msg = f'【{search_key}】{knowledge_dict[search_key]}'
+    knowledge_msg = f'【{search_key}】{knowledge_dict_old[search_key]}'
     marriage_trace_dict['配偶特点'] = [knowledge_msg]
 
     '''
@@ -325,7 +325,7 @@ def parse_marrage():
     '''
     trace_affair_vec = []
     if search_key == '7飞11':
-        trace_affair_vec.append(f'【{search_key}】可能配偶去找桃花。{knowledge_dict[search_key]}')
+        trace_affair_vec.append(f'【{search_key}】可能配偶去找桃花。{knowledge_dict_old[search_key]}')
     else:
         trace_affair_vec.append(f'未检测到！！{search_key}: 可能配偶去找桃花。')
 
@@ -334,13 +334,13 @@ def parse_marrage():
     ruler_11_loc, ruler_12_loc = star_dict[ruler_11].house, star_dict[ruler_12].house
     tmp_key = '11飞7'
     if ruler_11_loc == 7:
-        trace_affair_vec.append(f'【{tmp_key}】可能有桃花来找配偶。{knowledge_dict[tmp_key]}')
+        trace_affair_vec.append(f'【{tmp_key}】可能有桃花来找配偶。{knowledge_dict_old[tmp_key]}')
     else:
         trace_affair_vec.append(f'未检测到！！{tmp_key}: 可能有桃花来找配偶。')
 
     tmp_key = '12飞7'
     if ruler_12_loc == 7:
-        trace_affair_vec.append(f'【{tmp_key}】可能有桃花来找配偶。{knowledge_dict[tmp_key]}')
+        trace_affair_vec.append(f'【{tmp_key}】可能有桃花来找配偶。{knowledge_dict_old[tmp_key]}')
     else:
         trace_affair_vec.append(f'未检测到！！{tmp_key}: 可能有桃花来找配偶。')
 
@@ -396,6 +396,14 @@ def parse_marrage():
 
     all_trace_dict['婚姻'] = marriage_trace_dict
 
+
+def parse_marrage_2():
+    # 婚神星落宫
+    love_star_house = star_dict['婚神'].house
+    key = f'婚神{love_star_house}宫'
+
+    desc = knowledge_dict['婚神星落宫'][key]
+    marriage_trace_dict['婚神星表现'] = [f'【{key}】{desc}']
 
 def parse_wealth():
     """1. 钱怎么来，1r、2r得到接纳 互容"""
@@ -534,7 +542,7 @@ def parse_wealth():
 
     ruler2_loc = star_dict[ruler2].house
     key = f'2飞{ruler2_loc}'
-    wealth_trace_dict['钱会花在什么地方'] = [f'【{key}】{knowledge_dict[key]}']
+    wealth_trace_dict['钱会花在什么地方'] = [f'【{key}】{knowledge_dict_old[key]}']
     all_trace_dict['财富'] = wealth_trace_dict
 
 
@@ -788,3 +796,76 @@ def parse_work():
     work_trace_dict['二档适合的职业'] = sub_vec
 
     all_trace_dict['事业'] = work_trace_dict
+
+
+def parse_asc_star():
+    # 解析命主星落宫
+    asc_star = house_dict[1].ruler
+    asc_house = star_dict[asc_star].house
+
+    key = f'命主星{asc_house}宫'
+    desc = knowledge_dict['命主星落宫'][key]
+    asc_trace_dict['重点概括'] = [f'【{key}】{desc}']
+
+    all_trace_dict['个性显现及生活领域上的重点'] = asc_trace_dict
+
+
+def parse_study():
+    # 解析：初等学业、高等学业
+    ruler_3 = house_dict[3].ruler
+    ruler_9 = house_dict[9].ruler
+
+    ruler_3_house = star_dict[ruler_3].house
+    ruler_9_house = star_dict[ruler_9].house
+
+    key3 = f'3飞{ruler_3_house}'
+    key9 = f'9飞{ruler_9_house}'
+    junior_desc = knowledge_dict['初等学业飞星'][key3]
+    senior_desc = knowledge_dict['高等学业飞星'][key9]
+
+    study_trace_dict['高中前'] = [junior_desc]
+    study_trace_dict['高中后'] = [senior_desc]
+
+    # 3、9宫落⭐️
+    star_in_3 = house_dict[3].loc_star
+    star_in_9 = house_dict[9].loc_star
+
+    for id in [3, 9]:
+        for s in house_dict[id].loc_star:
+            key = f'{s}{id}宫'
+
+            sub_dict = knowledge_dict['初等学业飞星'] if id == 3 else knowledge_dict['高等学业飞星']
+
+            if id == 3 and key in sub_dict:
+                study_trace_dict['高中前'].append(sub_dict[key])
+            elif id == 9 and key in sub_dict:
+                study_trace_dict['高中后'].append(sub_dict[key])
+
+
+    all_trace_dict['学业'] = study_trace_dict
+
+
+def parse_nature():
+    sub_vec = []
+    for star_a, obj in star_dict.items():
+        if star_a not in short_mapping:
+            continue
+        star_a = short_mapping[star_a]
+
+        for star_b, asp in obj.aspect_dict.items():
+            if asp.aspect not in ['合', '冲', '刑']:
+                continue
+
+            if star_b not in short_mapping:
+                continue
+            star_b = short_mapping[star_b]
+
+            key = f'{star_a}{star_b}{asp.aspect}'
+
+            if key in knowledge_dict['行星相位']:
+                sub_vec.append(f"【{key}】{knowledge_dict['行星相位'][key]}")
+
+    nature_trace_dict['性格分析'] = sub_vec
+    all_trace_dict['性格分析'] = nature_trace_dict
+
+
