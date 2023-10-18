@@ -6,11 +6,24 @@ from bs4 import BeautifulSoup
 from util import Aspect, Star, House
 from util import *
 from marriage_report_logic import *
+from progressions import *
 
 need_debug = True
 
 if __name__ == '__main__':
     customer_name = 'lisha'
+
+    # --------------- logger 创建文件处理器
+    file_handler = logging.FileHandler(f'./out/progression_{customer_name}.log')
+
+    # 创建日志格式
+    formatter = logging.Formatter('%(levelname)s - %(message)s')
+    file_handler.setFormatter(formatter)
+
+    # 将文件处理器添加到日志记录器
+    logger.addHandler(file_handler)
+    test()
+    # ----------------- End logger ---------------
 
     name, birthday, location, glon_deg, glat_deg, toffset, is_dst, _ = load_customer_info(customer_name=customer_name)
     load_knowledge_file()

@@ -7,6 +7,41 @@ from enum import Enum
 from bs4 import BeautifulSoup
 import configparser
 
+import logging
+
+# 创建日志记录器
+logger = logging.getLogger('my_logger')
+logger.setLevel(logging.DEBUG)
+
+
+class ReportMsg:
+    def __init__(self):
+        self.topic_dict: Dict[str, Dict[str, List[str]]] = {}
+
+    def set_msg(self, topic, sub_topic, msg):
+        if topic not in self.topic_dict:
+            self.topic_dict[topic] = {sub_topic: [msg]}
+        elif sub_topic not in self.topic_dict[topic]:
+            self.topic_dict[topic].update({sub_topic: [msg]})
+        else:
+            self.topic_dict[topic][sub_topic].append(msg)
+
+    def __str__(self):
+        trace_vec = []
+        for topic, sub_topic_dic in self.topic_dict.items():
+            a = f'\n--------------------------- 解析「{topic}」---------------------------'
+            trace_vec.append(a)
+
+            for sub_topic, msg_vec in sub_topic_dic.items():
+                trace_vec.append(f'\n『{sub_topic}』:')
+
+                for id, msg in enumerate(msg_vec, start=1):
+                    tmp = f'{id}、{msg}'
+                    trace_vec.append(tmp)
+
+        all = '\n'.join(trace_vec)
+        return f"{all}"
+
 
 almuten_star_sign_mapping = {
     'Q': '太阳',
@@ -135,6 +170,7 @@ jobs_dict: Dict[str, Tuple[str, str]] = {}
 jobs_star_dict: Dict[str, str] = {}
 # common_trace_vec = []  # for 简单的打印
 
+report = ReportMsg()
 
 # Load knowledge_web.ini
 def load_knowledge_file():
