@@ -8,6 +8,8 @@ from bs4 import BeautifulSoup
 import configparser
 
 import logging
+import pickle
+
 
 # 创建日志记录器
 logger = logging.getLogger('my_logger')
@@ -172,8 +174,29 @@ jobs_star_dict: Dict[str, str] = {}
 
 report = ReportMsg()
 
-# Load knowledge_web.ini
+
+def dump_load_http_result(filename, soup_obj=None, is_load_mode=True):
+    if is_load_mode:
+        return _load_http_result(filename)
+    else:
+        _dump_http_result(filename, soup_obj)
+
+
+def _dump_http_result(filename: str, soup_obj: BeautifulSoup):
+    # 将 soup 对象序列化到文件
+    with open(filename, 'wb') as file:
+        pickle.dump(soup_obj, file)
+
+
+def _load_http_result(filename) -> BeautifulSoup:
+    with open(filename, 'rb') as file:
+        deserialized_soup = pickle.load(file)
+
+        return deserialized_soup
+
+
 def load_knowledge_file():
+    # Load knowledge_web.ini
     config = configparser.ConfigParser()
 
     file_name = './knowledge_web.ini'
@@ -291,7 +314,7 @@ def parse_almuten_star(soup):
 
         # print(star_obj)
 
-    print('------------------ End star_obj ------------------')
+    # print('------------------ End star_obj ------------------')
 
     # 解析互溶接纳
     table_feature = tables[2]
@@ -341,6 +364,7 @@ def fetch_ixingpan_soup(name, female=1, dist=1550, birthday_time='1962-08-08 20:
     birth_time = birthday_time.split(' ')[1]
 
     url = f"https://xp.ixingpan.com/xp.php?type=natal&name={name}&sex={female}&dist={dist}&date={birthday}&time={birth_time}&dst={dst}&hsys=P"
+    logger.info(f'爱星盘请求串 {url}')
 
     # 发送GET请求
     response = requests.get(url, cookies={'xp_planets_natal': '0,1,2,3,4,5,6,7,8,9,25,26,27,28,15,19,10,29'})
@@ -450,7 +474,7 @@ def parse_ixingpan_aspect(soup):
         star_b = tds[2].text.strip()
         aspect = tds[1].text.strip()
 
-        print(star_a, star_b, aspect)
+        # print(star_a, star_b, aspect)
 
         aspect = aspect if aspect != '拱' else '三合'
 
@@ -478,6 +502,10 @@ def load_customer_info(customer_name='jackietan'):
     birthday = config.get(customer_name, 'birthday')
     location = config.get(customer_name, 'location')
 
+    cur_loc = location
+    if config.has_option(customer_name, 'cur_loc'):
+        cur_loc = config.get(customer_name, 'cur_loc')
+
     glon_deg, glat_deg = '', ''
 
     # 如果指定就用指定的
@@ -492,7 +520,7 @@ def load_customer_info(customer_name='jackietan'):
     # dist = config.get(customer_name, 'dist')
     dist = ''
 
-    return name, birthday, location, glon_deg, glat_deg, toffset, is_dst, dist
+    return name, birthday, location, cur_loc, glon_deg, glat_deg, toffset, is_dst, dist
 
 
 
@@ -625,11 +653,12 @@ def load_ixingpan_area(user_input='山东省济南市历下区')->str:
         target_city = match.group(2)
         target_district = match.group(3)
 
-        print(f"省份: {target_province}")
-        print(f"城市: {target_city}")
-        print(f"区/县: {target_district}")
+        # print(f"省份: {target_province}")
+        # print(f"城市: {target_city}")
+        # print(f"区/县: {target_district}")
     else:
-        print("未匹配到数据")
+        # print("未匹配到数据")
+        logger.fatal('解析省、市、区错误！')
         exit(0)
 
     with open('ixingpan_area.json', 'r') as file:
@@ -647,7 +676,9 @@ def load_ixingpan_area(user_input='山东省济南市历下区')->str:
                             # tmp_district = district_name[:-1]
                             if target_district == district_name:
                             # if target_district == district_name or target_district == tmp_district:
-                                print(f'\n找到dist={district_code}')
+                            #     print(f'\n找到dist={district_code}')
+                                logger.debug(f'查找dist={district_code}')
+
                                 return district_code
                         #     else:
                         #         print(f'未找到:{target_city}')
@@ -673,9 +704,11 @@ def parse_glon_glat(soup):
 
     if match:
         coordinates = match.group(1)
-        print('获取经纬度结果：', coordinates)
+        logger.debug(f'获取经纬度结果：{coordinates}')
+        # print('获取经纬度结果：', coordinates)
     else:
-        print("未匹配到数据")
+        logger.fatal('未匹配到数据')
+        # print("未匹配到数据")
         exit(0)
 
     # 将 104°09E 30°00N 转换成：glon_deg:104 E 09	glat_deg:30 N 00
@@ -684,14 +717,16 @@ def parse_glon_glat(soup):
     trans_pattern = r'((\d+)°(\d+)[EW] (\d+)°(\d+)[NS])'
     match = re.search(trans_pattern, input_str)
 
-    print(match.groups())
+    # print(match.groups())
     if match:
         glon_deg = f'{match.group(2)} E {match.group(3)}'
         glat_deg = f'{match.group(4)} N {match.group(5)}'
 
-        print('获取经纬度结果：', glon_deg, glat_deg)
+        logger.debug(f'解析经纬度结果：{glon_deg} {glat_deg}')
+        # print('获取经纬度结果：', glon_deg, glat_deg)
     else:
-        print('ERROR！解析经纬度信息错误')
+        logger.fatal('ERROR！解析经纬度信息错误')
+        # print('ERROR！解析经纬度信息错误')
         exit(0)
 
 
@@ -699,13 +734,13 @@ def parse_glon_glat(soup):
 
 
 if __name__ == '__main__':
-    load_knowledge_file()
-    print(knowledge_dict.keys())
-    load_jobs_file()
-    print(jobs_star_dict)
-    exit(0)
-    for a,b in zip([1,2,3], ['a','b', 'c']):
-        print(a,b)
+    # load_knowledge_file()
+    # print(knowledge_dict.keys())
+    # load_jobs_file()
+    # print(jobs_star_dict)
+    # exit(0)
+    # for a,b in zip([1,2,3], ['a','b', 'c']):
+    #     print(a,b)
 
     name, birthday, location, glon_deg, glat_deg, toffset, is_dst, dist = load_customer_info(customer_name='jackietan')
     print(name, birthday, location, glon_deg, glat_deg, toffset, is_dst, dist)

@@ -4,6 +4,7 @@ astro automatic
 ### Update——2023年10月17日
  - 增加 knowledge_web.ini 文件
  - TODO：
+   + [ ] 增加 http 抓取结果的 cache
    + [x] 命主星落宫的解析
    + [x] 婚神落宫的解析
    + [x] 初等学业、高等学业解析
