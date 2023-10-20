@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from typing import Tuple
-
+import os
 import requests
 from enum import Enum
 from bs4 import BeautifulSoup
@@ -9,6 +9,7 @@ from util import *
 from util import marriage_trace_dict
 import datetime
 from run import name, birthday, location, cur_loc, glon_deg, glat_deg, toffset, is_dst, dist
+import time
 
 
 
@@ -65,14 +66,24 @@ def get_solar_return(duration=10):
             'dist2': dist2
         }
 
-        url = f'{base_url}{"&".join(f"{k}={v}" for k, v in query_params.items())}'
-        logger.debug(f'日返url，{url}')
+        date2_fmt = date2.replace('-', '')
+        filename = f'./cache_file/{name}/{name}_solar_{date2_fmt}.pickle'
+        # logger.debug(filename)
 
-    # response = requests.get(url, cookies={'xp_planets_natal': '0,1,2,3,4,5,6,7,8,9,25,26,27,28,15,19,10,29'})
-    #
-    # # 获取返回的HTML源码
-    # html_str = response.text
-    # soup = BeautifulSoup(html_str, 'html.parser')
+        if not os.path.exists(filename):
+            url = f'{base_url}{"&".join(f"{k}={v}" for k, v in query_params.items())}'
+
+            response = requests.get(url, cookies={'xp_planets_natal': '0,1,2,3,4,5,6,7,8,9,25,26,27,28,15,19,10,29'})
+            html_str = response.text
+            soup = BeautifulSoup(html_str, 'html.parser')
+
+            # Dump BeautifuleSoup to folder
+            dump_load_http_result(filename=filename, soup_obj=soup, is_load_mode=False)
+            logger.info(f'成功通过 http 获取日返结果, 并将结果缓存到文件，路径=[{filename}], url={url}')
+            time.sleep(1)
+        else:
+            soup = dump_load_http_result(filename=filename, is_load_mode=True)
+            logger.info(f'成功从本地加载日返数据，文件路径=[{filename}]！')
 
 
 def test():

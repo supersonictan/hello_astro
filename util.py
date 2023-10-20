@@ -15,6 +15,9 @@ import pickle
 logger = logging.getLogger('my_logger')
 logger.setLevel(logging.DEBUG)
 
+file_logger = logging.getLogger('my_file_logger')
+file_logger.setLevel(logging.INFO)
+
 
 class ReportMsg:
     def __init__(self):

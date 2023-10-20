@@ -28,7 +28,7 @@ def get_soup_from_http():
 
     if os.path.exists(filename_ixingpan):
         soup_ixingpan = dump_load_http_result(filename=filename_ixingpan, is_load_mode=True)
-        logger.info(f'Load soup from File:{filename_ixingpan}')
+        logger.info(f'成功从本地加载本命盘数据，File=[{filename_ixingpan}]')
     else:
         soup_ixingpan = fetch_ixingpan_soup(name=name, dist=dist, birthday_time=birthday, dst=is_dst, female=1)
         dump_load_http_result(filename=filename_ixingpan, soup_obj=soup_ixingpan, is_load_mode=False)
@@ -43,7 +43,7 @@ def get_soup_from_http():
 
     if os.path.exists(filename_almuten):
         soup_almuten = dump_load_http_result(filename=filename_almuten, is_load_mode=True)
-        logger.info(f'Load soup from File:{filename_almuten}')
+        logger.info(f'成功从本地加载本命盘数据，File=[{filename_almuten}]')
     else:
         post_data = build_almuten_http_data(name=name, birthinfo=birthday, loc=location, glon_deg=glon_deg, glat_deg=glat_deg, toffset=toffset, is_dst=is_dst)
         soup_almuten = fetch_almuten_soup(post_data)
@@ -69,16 +69,16 @@ def load_file():
 
 if __name__ == '__main__':
     # --------------- logger 创建文件处理器、创建控制台处理器
-    file_handler = logging.FileHandler(f'./out/progression_{customer_name}.log')
-    console_handler = logging.StreamHandler()
+    formatter = logging.Formatter('%(levelname)s - %(message)s')
 
     # 创建日志格式
-    formatter = logging.Formatter('%(levelname)s - %(message)s')
-    file_handler.setFormatter(formatter)
-    console_handler.setFormatter(formatter)
+    # file_handler = logging.FileHandler(f'./out/progression_{customer_name}.log')
+    # file_handler.setFormatter(formatter)
+    # file_logger.addHandler(file_handler)
 
     # 将文件处理器添加到日志记录器
-    logger.addHandler(file_handler)
+    console_handler = logging.StreamHandler()
+    console_handler.setFormatter(formatter)
     logger.addHandler(console_handler)
     # ----------------- End logger ---------------
 
