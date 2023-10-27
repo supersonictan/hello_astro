@@ -11,7 +11,7 @@ import os
 
 need_debug = True
 
-customer_name = 'jackietan'
+customer_name = 'july_friend3'
 
 name, birthday, location, cur_loc, glon_deg, glat_deg, toffset, is_dst, _ = load_customer_info(customer_name=customer_name)
 dist = load_ixingpan_area(user_input=location)
