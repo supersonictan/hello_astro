@@ -1,6 +1,17 @@
 # hello_astro
 astro automatic
 
+### Set CVM
+1. sudo yum install git
+2. ssh-keygen -t rsa -b 4096 -C "376079374@qq.com"
+3. 复制公钥到git：~/.ssh/id_rsa.pub
+4. wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+5. bash Miniconda3-latest-Linux-x86_64.sh
+6. conda install beautifulsoup4
+7. conda install requests
+8. 用于rz和sz命令：sudo yum install lrzsz
+
+
 ### Update——2023年10月17日
  - 增加 knowledge_web.ini 文件
  - TODO：
