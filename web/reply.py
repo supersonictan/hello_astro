@@ -59,3 +59,5 @@ class ImageMsg(Msg):
             </xml>
             """
         return XmlForm.format(**self.__dict)
+
+

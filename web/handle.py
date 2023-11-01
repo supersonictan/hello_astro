@@ -11,12 +11,15 @@ import hashlib
 import reply
 import receive
 import web
+import sys
+
+# print("Python版本：", sys.version)
 
 class Handle():
     def POST(self):
         try:
             webData = web.data()
-            print("Handle Post webdata is ", webData)
+            # print("Handle Post webdata is ", webData)
 
             recMsg = receive.parse_xml(webData)
 
@@ -24,7 +27,11 @@ class Handle():
                 toUser = recMsg.FromUserName
                 fromUser = recMsg.ToUserName
 
-                content = "test"
+                content = recMsg.Content
+                content = content.decode('utf-8')
+                # print(type(content))
+
+                # print(f'content:{content}')
 
                 replyMsg = reply.TextMsg(toUser, fromUser, content)
 
@@ -35,3 +42,6 @@ class Handle():
         except Exception as Argument:
             print(Argument)
             return Argument
+
+
+

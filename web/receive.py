@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # coding=utf-8
 
 
@@ -9,6 +8,9 @@ Brief:
 """
 
 import xml.etree.ElementTree as ET
+import sys
+
+# print("Python版本：", sys.version)
 
 
 def parse_xml(web_data):
@@ -30,6 +32,11 @@ class Msg(object):
         self.MsgType = xmlData.find('MsgType').text
         self.MsgId = xmlData.find('MsgId').text
 
+        content_origin = xmlData.find('Content').text
+        # print(type(content_origin))
+        # print(content_origin)
+        self.Content = content_origin 
+
 
 class TextMsg(Msg):
     def __init__(self, xmlData):
@@ -42,3 +49,5 @@ class ImageMsg(Msg):
         Msg.__init__(self, xmlData)
         self.PicUrl = xmlData.find('PicUrl').text
         self.MediaId = xmlData.find('MediaId').text
+
+
