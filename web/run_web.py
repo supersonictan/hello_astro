@@ -3,12 +3,9 @@
 import web
 from handle import Handle
 
-
 urls = (
-    '/wx', 'Handle',
+    '/wx_hello_astro', 'Handle',
 )
-
-
 
 if __name__ == '__main__':
     app = web.application(urls, globals())

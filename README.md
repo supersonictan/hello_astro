@@ -10,6 +10,7 @@ astro automatic
 6. conda install beautifulsoup4
 7. conda install requests
 8. 用于rz和sz命令：sudo yum install lrzsz
+9. pip install web.py
 
 
 ### Update——2023年10月17日
