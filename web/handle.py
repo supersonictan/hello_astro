@@ -6,16 +6,32 @@ File: handle.py
 Date: 2023/11/01 12:11:35
 Brief: 
 """
-
+from typing import Tuple
 import hashlib
 import reply
 import receive
 import web
 import sys
+import cpca
+
 
 # print("Python版本：", sys.version)
 
-class Handle():
+def parse_area(inp_str) -> Tuple[str, str, str]:
+    df = cpca.transform([inp_str])
+
+    province = df.iloc[0]['省']
+    city = df.iloc[0]['市']
+    area = df.iloc[0]['区']
+    
+    return province, city, area
+
+
+def get_astro_data(content):
+    pass
+
+
+class Handle(): 
     def POST(self):
         try:
             webData = web.data()
@@ -32,8 +48,11 @@ class Handle():
                 # print(type(content))
 
                 # print(f'content:{content}')
+                province, city, area = parse_area(content)
 
-                replyMsg = reply.TextMsg(toUser, fromUser, content)
+                reply_str = f'省份: {province}\n城市: {city}\n区: {area}'
+
+                replyMsg = reply.TextMsg(toUser, fromUser, reply_str)
 
                 return replyMsg.send()
             else:

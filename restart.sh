@@ -1,7 +1,5 @@
 #!/bin/bash
 #
-# Copyright (c) 2017 Tencent Inc. All Rights Reserved
-#
 # File: stop.sh
 # Author: jackietan@tencent.com
 # Date: 2023/11/01 23:11:34

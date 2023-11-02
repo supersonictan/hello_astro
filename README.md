@@ -11,6 +11,11 @@ astro automatic
 7. conda install requests
 8. 用于rz和sz命令：sudo yum install lrzsz
 9. pip install web.py
+10. conda install -c conda-forge jieba 用于cpca 地址解析
+11. conda install -c conda-forge cpca
+12. 更新conda源
+    - conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/
+    - conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main/
 
 
 ### Update——2023年10月17日
